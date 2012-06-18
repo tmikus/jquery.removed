@@ -72,18 +72,20 @@ function notifyNodesBeforeRemoving($node) {
 	/// </summary>
 	/// <param name="$node">Node to notify.</param>
 
-    $node.triggerHandler('removing').children().each(function() {
+    $node.triggerHandler('removing');
+	$node.children().each(function() {
 		notifyNodesBeforeRemoving($(this));
 	});
 }
 
-function notifyNodesAfterRemoving(node) {
+function notifyNodesAfterRemoving($node) {
 	/// <summary>
 	/// Notifies nodes that they have been removed.
 	/// </summary>
-	/// <param name="node">Node to notify.</param>
+	/// <param name="$node">Node to notify.</param>
 
-    $(node).triggerHandler('removed').children().each(function() {
+    $node.triggerHandler('removed');
+	$node.children().each(function() {
 		notifyNodesAfterRemoving($(this));
 	});
 }

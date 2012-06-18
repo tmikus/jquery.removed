@@ -24,7 +24,7 @@ function extendElementPrototype(name, func) {
         Element.prototype[name] = func;
     }
 
-    //Else extend every singel Element prototype one by one
+    //Else extend every single Element prototype one by one
     else {
 
         //All elements except object and embed
@@ -64,19 +64,15 @@ function extendElementPrototype(name, func) {
     }
 }
 
-function notifyNodesBeforeRemoving(node) {
+function notifyNodesBeforeRemoving($node) {
 	/// <summary>
 	/// Notifies nodes that they are about to be removed.
 	/// </summary>
-	/// <param name="node">Node to notify.</param>
+	/// <param name="$node">Node to notify.</param>
 
-    $(node).triggerHandler('removing');
-
-    if (node.children) {
-        for (var index = 0; index < node.children.length; index++) {
-            notifyNodesBeforeRemoving(node.children[index]);
-        }
-    }
+    $node.triggerHandler('removing').children().each(function() {
+		notifyNodesBeforeRemoving($(this));
+	});
 }
 
 function notifyNodesAfterRemoving(node) {
@@ -85,13 +81,9 @@ function notifyNodesAfterRemoving(node) {
 	/// </summary>
 	/// <param name="node">Node to notify.</param>
 
-    $(node).triggerHandler('removed');
-
-    if (node.children) {
-        for (var index = 0; index < node.children.length; index++) {
-            notifyNodesAfterRemoving(node.children[index]);
-        }
-    }
+    $(node).triggerHandler('removed').children().each(function() {
+		notifyNodesAfterRemoving($(this));
+	});
 }
 
 extendElementPrototype('removeChild', function (node) {
@@ -102,8 +94,9 @@ extendElementPrototype('removeChild', function (node) {
 	/// <param name="node">Removed node instance.</param>
     /// <returns>Result</returns>
 
-    notifyNodesBeforeRemoving(node);
+	var $node = $(node);
+    notifyNodesBeforeRemoving($node);
     var result = this._removeChild.apply(this, arguments);
-    notifyNodesAfterRemoving(node);
+    notifyNodesAfterRemoving($node);
     return result;
 });
